@@ -1,10 +1,12 @@
 package splunk.movies.rest_api;
 
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
+//import java.io.InputStream;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.imageio.ImageIO;
+//import javax.imageio.ImageIO;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -109,10 +111,22 @@ public class MovieTest extends TestCase {
 			return false;
 		}
 	}
-
+	
+	/*
+	 * Test Case 1 for BR-SPL-001: No two movies should have the same image
+	*/
+	
 	@Test
-	public void testTest() {
-		fail("Test");
+	public void testDuplicateImageURLs() {
+		Set<String> set = new HashSet<String>();
+		for(Movie mov : movies) {
+			String imageURL = mov.getImageURL();
+			if(set.contains(imageURL)){
+				fail("Two movies have the same Poster Path - " + imageURL);
+			}else {
+				set.add(imageURL);
+			}
+		}
 	}
 
 }
