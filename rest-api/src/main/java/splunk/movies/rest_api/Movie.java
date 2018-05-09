@@ -60,7 +60,7 @@ public class Movie {
 	public void setGenreSum(int genreSum) {
 		this.genreSum = genreSum;
 	}
-	public boolean isHasPalindrome() {
+	public boolean doesHavePalindrome() {
 		return hasPalindrome;
 	}
 	public void setHasPalindrome(boolean hasPalindrome) {

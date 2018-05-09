@@ -128,5 +128,57 @@ public class MovieTest extends TestCase {
 			}
 		}
 	}
+	
+	
+	/*
+	 * Test Case for BR-SPL-002: All poster_path links must be valid.
+	 * poster_path link of null is also acceptable
+	*/
+	
+	@Test
+	public void testIfPosterPathsAreValid() {
+		for(Movie mov : movies) {
+			String imageURL = mov.getImageURL();
+			if(imageURL != null && !isValid(imageURL)) {
+				fail("Poster Path is not valid: "+ imageURL);
+			}
+		}
+	}
+	
+	/*
+	 * Test Case for BR-SPL-004: 
+	 * The number of movies whose sum of "genre_ids" > 400 should be no more than 7
+	*/
+	
+	@Test
+	public void testIfGenreSum400LessThan7() {
+		int count = 0;
+		for(Movie mov : movies) {
+			if(mov.getGenreSum() > 400) {
+				count++;
+			}
+		}
+		if(count > 7) {
+			fail("There are more than 7 movies with a Genre Sum greater than 400");
+		}
+	}
+
+	/*
+	 * Test Case for BR-SPL-005: 
+	 * There is at least one movie in the database whose title has a palindrome in it.
+	*/
+	 
+	@Test
+	public void testIfAtLeastOneMovieWithPalindrome() {
+		int count = 0;
+		for(Movie mov : movies) {
+			if(mov.doesHavePalindrome()) {
+				count++;
+			}
+		}
+		if(count < 1) {
+			fail("There is no movie in the database with a palindrome in it's title");
+		}
+	}
 
 }
