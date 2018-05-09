@@ -1,12 +1,19 @@
 package splunk.movies.rest_api;
 
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
+import java.net.URL;
+
+import javax.imageio.ImageIO;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,16 +36,83 @@ public class MovieTest extends TestCase {
 				ResponseHandler<String> responseHandler=new BasicResponseHandler();
 				String responseBody = httpclient.execute(httpGet, responseHandler);
 				System.out.println(responseBody);
+
+				JSONObject response = new JSONObject(responseBody);
+
+				JSONArray res = response.getJSONArray("results");
+				int len = res.length();
+				movies = new Movie[len];
+
+				for(int i = 0; i < len; i++) {
+					JSONObject obj = res.getJSONObject(i);
+
+					int id = obj.getInt("id");
+
+					String title = obj.getString("title");
+					String imageURL = obj.optString("poster_path");
+
+					//TODO: Store Image 
+					BufferedImage image = null;
+					/*
+					if(isValid(imageURL)) {
+						URL u = new URL(imageURL);
+						InputStream is = u.openStream();
+						ImageIO.read(is);
+					}*/
+
+					JSONArray gIds = obj.getJSONArray("genre_ids");
+					int gLen =  gIds.length();
+					int [] genreIDs = new int [gLen];
+					int genreSum = 0;
+					for(int j = 0; j < gLen; ++j) {
+						genreIDs[j] = gIds.getInt(j);
+						genreSum += genreIDs[j];
+					}
+
+					boolean hasPalindrome = false;
+
+					String [] words = title.split(" ");
+					for(String word : words) {
+						if(isPalindrome(word)) {
+							hasPalindrome = true;
+							break;
+						}
+					}
+					Movie movie = new Movie(id, title, imageURL, image, genreIDs, genreSum, hasPalindrome);
+					movies[i] = movie;
+				}
+
 				setUpIsCompete = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
+	public boolean isPalindrome(String s) {
+		String x = s.toLowerCase();
+		char [] c = x.toCharArray();
+		for(int i = 0; i < c.length/2; i++) {
+			if(c[i] != c[c.length-1-i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean isValid(String url){
+		try {
+			new URL(url).toURI();
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+
 	@Test
 	public void testTest() {
 		fail("Test");
 	}
-	
+
 }
