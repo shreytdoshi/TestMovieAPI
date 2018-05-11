@@ -113,7 +113,7 @@ public class MovieTest extends TestCase {
 	}
 	
 	/*
-	 * Test Case 1 for BR-SPL-001: No two movies should have the same image
+	 * Test Case 1 for BR SPL-001: No two movies should have the same image
 	*/
 	
 	@Test
@@ -131,7 +131,7 @@ public class MovieTest extends TestCase {
 	
 	
 	/*
-	 * Test Case for BR-SPL-002: All poster_path links must be valid.
+	 * Test Case for BR SPL-002: All poster_path links must be valid.
 	 * poster_path link of null is also acceptable
 	*/
 	
@@ -146,7 +146,7 @@ public class MovieTest extends TestCase {
 	}
 	
 	/*
-	 * Test Case for BR-SPL-004: 
+	 * Test Case for BR SPL-004: 
 	 * The number of movies whose sum of "genre_ids" > 400 should be no more than 7
 	*/
 	
@@ -164,7 +164,7 @@ public class MovieTest extends TestCase {
 	}
 
 	/*
-	 * Test Case for BR-SPL-005: 
+	 * Test Case for BR SPL-005: 
 	 * There is at least one movie in the database whose title has a palindrome in it.
 	*/
 	 
@@ -180,5 +180,30 @@ public class MovieTest extends TestCase {
 			fail("There is no movie in the database with a palindrome in it's title");
 		}
 	}
+	
+	/*
+	 * Test Case for BR SPL-006: 
+	 * There are at least two movies in the database whose title contain the title of another movie.
+	*/	
+	
+	@Test
+	public void testIfSubstringCountIsAtLeastTwo() {
+		int count = 0;
+		for(int i = 0; i < movies.length; ++i) {
+			for(int j = i+1; j < movies.length; ++j) {
+				String t1 = movies[i].getTitle();
+				String t2 = movies[j].getTitle();
+				if(t1.contains(t2) || t2.contains(t1)) {
+					count++;
+				}
+			}
+		}
+		if(count < 2) {
+			fail("There are less than two set of movies in the database whose title contain the title of another movie.");
+		}
+	}
+	
+	
+
 
 }
