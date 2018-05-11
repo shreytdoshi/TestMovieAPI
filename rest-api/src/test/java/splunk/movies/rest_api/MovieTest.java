@@ -111,11 +111,11 @@ public class MovieTest extends TestCase {
 			return false;
 		}
 	}
-	
+
 	/*
 	 * Test Case 1 for BR SPL-001: No two movies should have the same image
-	*/
-	
+	 */
+
 	@Test
 	public void testDuplicateImageURLs() {
 		Set<String> set = new HashSet<String>();
@@ -128,13 +128,13 @@ public class MovieTest extends TestCase {
 			}
 		}
 	}
-	
-	
+
+
 	/*
 	 * Test Case for BR SPL-002: All poster_path links must be valid.
 	 * poster_path link of null is also acceptable
-	*/
-	
+	 */
+
 	@Test
 	public void testIfPosterPathsAreValid() {
 		for(Movie mov : movies) {
@@ -144,12 +144,67 @@ public class MovieTest extends TestCase {
 			}
 		}
 	}
-	
+
+	/*
+	 * Test Case for BR SPL-003: 
+	 * SPL-003: Sorting requirement. Rule #1 Movies with genre_ids == null should be first in response.
+	 * Rule #2, if multiple movies have genre_ids == null, then sort by id (ascending).
+	 * For movies that have non-null genre_ids, results should be sorted by id (ascending)
+	 */
+	static boolean isSortedByNull = true;
+	//static boolean areNullGenresSortedById = true;
+
+	@Test
+	public void testSorting() {
+		boolean flag = false;
+		for(Movie mov : movies) {
+			if(mov.getGenreSum() == 0 && flag) {
+				isSortedByNull = false;
+				fail("Movies not sorted with null genre ids ");
+			}
+			if(mov.getGenreSum() != 0) {
+				flag = true;
+			}
+		}
+	}
+
+	@Test
+	public void testSortingOfNullGenres() {
+		if(isSortedByNull) {		
+			int prev = Integer.MIN_VALUE;
+			for(Movie mov : movies) {
+				if(mov.getGenreSum() == 0) {
+					int id = mov.getId();
+					if(id < prev) {
+						fail("Movies are sorted by NULL genre ids but not by id");
+					}
+					prev = id;
+				}
+			}
+		}else {
+			fail("Movies not sorted with null genre ids ");
+		}
+	}
+
+	@Test
+	public void testSortingOfNonNullGenres() {
+		int prev = Integer.MIN_VALUE;
+		for(Movie mov : movies) {
+			if(mov.getGenreSum() != 0) {
+				int id = mov.getId();
+				if(id < prev) {
+					fail("Movies with NOT NULL genre ids are not sorted by id");
+				}
+				prev = id;
+			}
+		}
+	}
+
 	/*
 	 * Test Case for BR SPL-004: 
 	 * The number of movies whose sum of "genre_ids" > 400 should be no more than 7
-	*/
-	
+	 */
+
 	@Test
 	public void testIfGenreSum400LessThan7() {
 		int count = 0;
@@ -166,8 +221,8 @@ public class MovieTest extends TestCase {
 	/*
 	 * Test Case for BR SPL-005: 
 	 * There is at least one movie in the database whose title has a palindrome in it.
-	*/
-	 
+	 */
+
 	@Test
 	public void testIfAtLeastOneMovieWithPalindrome() {
 		int count = 0;
@@ -180,12 +235,12 @@ public class MovieTest extends TestCase {
 			fail("There is no movie in the database with a palindrome in it's title");
 		}
 	}
-	
+
 	/*
 	 * Test Case for BR SPL-006: 
 	 * There are at least two movies in the database whose title contain the title of another movie.
-	*/	
-	
+	 */	
+
 	@Test
 	public void testIfSubstringCountIsAtLeastTwo() {
 		int count = 0;
@@ -202,8 +257,8 @@ public class MovieTest extends TestCase {
 			fail("There are less than two set of movies in the database whose title contain the title of another movie.");
 		}
 	}
-	
-	
+
+
 
 
 }
