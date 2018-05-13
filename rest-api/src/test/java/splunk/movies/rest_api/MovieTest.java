@@ -74,7 +74,6 @@ public class MovieTest extends TestCase {
 						genreSum += genreIDs[j];
 					}
 
-					System.out.println(genreSum +" "+ id);
 					boolean hasPalindrome = false;
 
 					String [] words = title.split(" ");
