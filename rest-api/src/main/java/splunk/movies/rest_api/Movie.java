@@ -1,5 +1,6 @@
 package splunk.movies.rest_api;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 public class Movie {
@@ -7,12 +8,12 @@ public class Movie {
 	private int id;
 	private String title;
 	private String imageURL;
-	private BufferedImage image;
+	private Image image;
 	private int [] genreIDs;
 	private int genreSum;
 	private boolean hasPalindrome;
 	
-	public Movie(int id, String title, String imageURL, BufferedImage image, int[] genreIDs, int genreSum,
+	public Movie(int id, String title, String imageURL, Image image, int[] genreIDs, int genreSum,
 			boolean hasPalindrome) {
 		super();
 		this.id = id;
@@ -42,10 +43,10 @@ public class Movie {
 	public void setImageURL(String imageURL) {
 		this.imageURL = imageURL;
 	}
-	public BufferedImage getImage() {
+	public Image getImage() {
 		return image;
 	}
-	public void setImage(BufferedImage image) {
+	public void setImage(Image image) {
 		this.image = image;
 	}
 	public int[] getGenreIDs() {

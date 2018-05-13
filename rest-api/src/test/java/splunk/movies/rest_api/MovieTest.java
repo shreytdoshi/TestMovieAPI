@@ -1,10 +1,13 @@
 package splunk.movies.rest_api;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 //import java.io.InputStream;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 //import javax.imageio.ImageIO;
 
@@ -17,7 +20,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import junit.framework.TestCase;
 
@@ -37,7 +42,6 @@ public class MovieTest extends TestCase {
 				httpGet.addHeader("Accept", "application/json");
 				ResponseHandler<String> responseHandler=new BasicResponseHandler();
 				String responseBody = httpclient.execute(httpGet, responseHandler);
-				System.out.println(responseBody);
 
 				JSONObject response = new JSONObject(responseBody);
 
@@ -54,13 +58,12 @@ public class MovieTest extends TestCase {
 					String imageURL = obj.optString("poster_path");
 
 					//TODO: Store Image 
-					BufferedImage image = null;
-					/*
+					Image image = null;
+
 					if(isValid(imageURL)) {
 						URL u = new URL(imageURL);
-						InputStream is = u.openStream();
-						ImageIO.read(is);
-					}*/
+						image = ImageIO.read(u);
+					}
 
 					JSONArray gIds = obj.getJSONArray("genre_ids");
 					int gLen =  gIds.length();
@@ -71,6 +74,7 @@ public class MovieTest extends TestCase {
 						genreSum += genreIDs[j];
 					}
 
+					System.out.println(genreSum +" "+ id);
 					boolean hasPalindrome = false;
 
 					String [] words = title.split(" ");
@@ -151,15 +155,12 @@ public class MovieTest extends TestCase {
 	 * Rule #2, if multiple movies have genre_ids == null, then sort by id (ascending).
 	 * For movies that have non-null genre_ids, results should be sorted by id (ascending)
 	 */
-	static boolean isSortedByNull = true;
-	//static boolean areNullGenresSortedById = true;
 
 	@Test
 	public void testSorting() {
 		boolean flag = false;
 		for(Movie mov : movies) {
 			if(mov.getGenreSum() == 0 && flag) {
-				isSortedByNull = false;
 				fail("Movies not sorted with null genre ids ");
 			}
 			if(mov.getGenreSum() != 0) {
@@ -170,19 +171,15 @@ public class MovieTest extends TestCase {
 
 	@Test
 	public void testSortingOfNullGenres() {
-		if(isSortedByNull) {		
-			int prev = Integer.MIN_VALUE;
-			for(Movie mov : movies) {
-				if(mov.getGenreSum() == 0) {
-					int id = mov.getId();
-					if(id < prev) {
-						fail("Movies are sorted by NULL genre ids but not by id");
-					}
-					prev = id;
+		int prev = Integer.MIN_VALUE;
+		for(Movie mov : movies) {
+			if(mov.getGenreSum() == 0) {
+				int id = mov.getId();
+				if(id < prev) {
+					fail("Movies with NULL genre ids are not sorted by id");
 				}
+				prev = id;
 			}
-		}else {
-			fail("Movies not sorted with null genre ids ");
 		}
 	}
 
